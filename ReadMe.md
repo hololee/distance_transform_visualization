@@ -8,9 +8,9 @@ In second pass, calculate weight of distance at right, bottom part of filter.
 *Below figure is simple random points distance transform result using this code.*  
   
 ---
-* Euclidean 3 by 3 neighborhood calculation.  
+* Euclidean 3 by 3 neighborhood calculation.(main.py)  
 ![Euclidean 3by3 neighborhood calculation](./D_e_3.png)
 
 ---
-* Euclidean 5 by 5 neighborhood calculation.  
+* Euclidean 5 by 5 neighborhood calculation.(main2.py)  
 ![Euclidean 3by3 neighborhood calculation](./D_e_5.png)
