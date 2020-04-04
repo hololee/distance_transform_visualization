@@ -113,6 +113,55 @@ def first_pass(sel_distance, sel_image):
     for y in range(height):
         for x in range(width):
             try:
+                local_mask_5 = sel_distance(y, y - 2, x, x - 2) + copy_img[y - 2:y - 1, x - 2:x - 1]
+                if len(local_mask_5) == 0:
+                    local_mask_5 = N_max
+            except:
+                local_mask_5 = N_max
+            try:
+                local_mask_6 = sel_distance(y, y - 2, x, x) + copy_img[y - 2:y - 1, x:x + 1]
+                if len(local_mask_6) == 0:
+                    local_mask_6 = N_max
+            except:
+                local_mask_6 = N_max
+            try:
+                local_mask_7 = sel_distance(y, y - 2, x, x - 1) + copy_img[y - 2:y - 1, x - 1:x]
+                if len(local_mask_7) == 0:
+                    local_mask_7 = N_max
+            except:
+                local_mask_7 = N_max
+            try:
+                local_mask_8 = sel_distance(y, y - 1, x, x - 2) + copy_img[y - 1:y, x - 2:x - 1]
+                if len(local_mask_8) == 0:
+                    local_mask_8 = N_max
+            except:
+                local_mask_8 = N_max
+            try:
+                local_mask_9 = sel_distance(y, y, x, x - 2) + copy_img[y:y + 1, x - 2:x - 1]
+                if len(local_mask_9) == 0:
+                    local_mask_9 = N_max
+            except:
+                local_mask_9 = N_max
+            try:
+                local_mask_10 = sel_distance(y, y + 1, x, x - 2) + copy_img[y + 1:y + 2, x - 2:x - 1]
+                if len(local_mask_10) == 0:
+                    local_mask_10 = N_max
+            except:
+                local_mask_10 = N_max
+            try:
+                local_mask_11 = sel_distance(y, y + 2, x, x - 2) + copy_img[y + 2:y + 3, x - 2:x - 1]
+                if len(local_mask_11) == 0:
+                    local_mask_11 = N_max
+            except:
+                local_mask_11 = N_max
+            try:
+                local_mask_12 = sel_distance(y, y + 2, x, x - 1) + copy_img[y + 2:y + 3, x - 1:x]
+                if len(local_mask_12) == 0:
+                    local_mask_12 = N_max
+            except:
+                local_mask_12 = N_max
+
+            try:
                 local_mask_1 = sel_distance(y, y - 1, x, x - 1) + copy_img[y - 1:y, x - 1:x]
                 if len(local_mask_1) == 0:
                     local_mask_1 = N_max
@@ -141,9 +190,9 @@ def first_pass(sel_distance, sel_image):
 
             try:
                 copy_img[y, x] = np.min(
-                    [local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_center]).item()
+                    [local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_5, local_mask_6, local_mask_7, local_mask_8,local_mask_9, local_mask_10, local_mask_11, local_mask_12, local_mask_center]).item()
             except:
-                copy_img[y, x] = np.min([local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_center])
+                copy_img[y, x] = np.min([local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_5, local_mask_6, local_mask_7, local_mask_8,local_mask_9, local_mask_10, local_mask_11, local_mask_12, local_mask_center])
 
     return copy_img
 
@@ -156,6 +205,55 @@ def second_pass(sel_distance, sel_image):
 
     for y in range(height - 1, -1, -1):
         for x in range(width - 1, -1, -1):
+            try:
+                local_mask_5 = sel_distance(y, y - 2, x, x + 1) + copy_img[y - 2:y - 1, x + 1:x + 2]
+                if len(local_mask_5) == 0:
+                    local_mask_5 = N_max
+            except:
+                local_mask_5 = N_max
+            try:
+                local_mask_6 = sel_distance(y, y - 2, x, x + 2) + copy_img[y - 2:y - 1, x + 2:x + 3]
+                if len(local_mask_6) == 0:
+                    local_mask_6 = N_max
+            except:
+                local_mask_6 = N_max
+            try:
+                local_mask_7 = sel_distance(y, y - 1, x, x + 2) + copy_img[y - 1:y, x + 2:x + 3]
+                if len(local_mask_7) == 0:
+                    local_mask_7 = N_max
+            except:
+                local_mask_7 = N_max
+            try:
+                local_mask_8 = sel_distance(y, y, x, x + 2) + copy_img[y:y + 1, x + 2:x + 3]
+                if len(local_mask_8) == 0:
+                    local_mask_8 = N_max
+            except:
+                local_mask_8 = N_max
+            try:
+                local_mask_9 = sel_distance(y, y + 1, x, x + 2) + copy_img[y + 1:y + 2, x + 2:x + 3]
+                if len(local_mask_9) == 0:
+                    local_mask_9 = N_max
+            except:
+                local_mask_9 = N_max
+            try:
+                local_mask_10 = sel_distance(y, y + 2, x, x + 2) + copy_img[y + 2:y + 3, x + 2:x + 3]
+                if len(local_mask_10) == 0:
+                    local_mask_10 = N_max
+            except:
+                local_mask_10 = N_max
+            try:
+                local_mask_11 = sel_distance(y, y + 2, x, x + 1) + copy_img[y + 2:y + 3, x + 1:x + 2]
+                if len(local_mask_11) == 0:
+                    local_mask_11 = N_max
+            except:
+                local_mask_11 = N_max
+            try:
+                local_mask_12 = sel_distance(y, y + 2, x, x) + copy_img[y + 2:y + 3, x:x + 1]
+                if len(local_mask_12) == 0:
+                    local_mask_12 = N_max
+            except:
+                local_mask_12 = N_max
+
             try:
                 local_mask_1 = sel_distance(y, y + 1, x, x + 1) + copy_img[y + 1:y + 2, x + 1:x + 2]
                 if len(local_mask_1) == 0:
@@ -185,51 +283,51 @@ def second_pass(sel_distance, sel_image):
 
             try:
                 copy_img[y, x] = np.min(
-                    [local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_center]).item()
+                    [local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_5, local_mask_6, local_mask_7, local_mask_8,local_mask_9, local_mask_10, local_mask_11, local_mask_12,local_mask_center]).item()
             except:
-                copy_img[y, x] = np.min([local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_center])
+                copy_img[y, x] = np.min([local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_5, local_mask_6, local_mask_7, local_mask_8,local_mask_9, local_mask_10, local_mask_11, local_mask_12, local_mask_center])
 
     return copy_img
 
 
 # main script ----------------------------------------------------------------------
 
-# # 1. Normal sample.---------------------------------------------
-# generate random centers.
-se_type = "D_4"
-
-image = generate_image()
-
-middle_result = image
-
-is_repeat = True
-while is_repeat:
-    result_AL = first_pass(distance_type["D_E"], middle_result)
-    final_result = second_pass(distance_type["D_E"], result_AL)
-
-    if np.array_equal(final_result, middle_result):
-        is_repeat = False
-    else:
-        print("repeat")
-        middle_result = final_result
-
-plt.subplot(1, 2, 1)
-plt.imshow(image)
-ax = plt.gca()
-for y in range(image.shape[0]):
-    for x in range(image.shape[1]):
-        ax.text(x, y, str(image[y, x])[:3], color='white', ha='center', va='center')
-plt.title("Sample image")
-
-plt.subplot(1, 2, 2)
-plt.imshow(final_result)
-ax = plt.gca()
-for y in range(final_result.shape[0]):
-    for x in range(final_result.shape[1]):
-        ax.text(x, y, str(final_result[y, x])[:3], color='white', ha='center', va='center')
-
-plt.title("Sample image with {}".format(se_type))
-plt.show()
+# # # 1. Normal sample.---------------------------------------------
+# # generate random centers.
+# se_type = "D_4"
+#
+# image = generate_image()
+#
+# middle_result = image
+#
+# is_repeat = True
+# while is_repeat:
+#     result_AL = first_pass(distance_type["D_E"], middle_result)
+#     final_result = second_pass(distance_type["D_E"], result_AL)
+#
+#     if np.array_equal(final_result, middle_result):
+#         is_repeat = False
+#     else:
+#         print("repeat")
+#         middle_result = final_result
+#
+# plt.subplot(1, 2, 1)
+# plt.imshow(image)
+# ax = plt.gca()
+# for y in range(image.shape[0]):
+#     for x in range(image.shape[1]):
+#         ax.text(x, y, str(image[y, x])[:3], color='white', ha='center', va='center')
+# plt.title("Sample image")
+#
+# plt.subplot(1, 2, 2)
+# plt.imshow(final_result)
+# ax = plt.gca()
+# for y in range(final_result.shape[0]):
+#     for x in range(final_result.shape[1]):
+#         ax.text(x, y, str(final_result[y, x])[:3], color='white', ha='center', va='center')
+#
+# plt.title("Sample image with {}".format(se_type))
+# plt.show()
 
 # # # 1. DE sample. ---------------------------------------------
 image_option = {"centers": 3, "size": 64}
