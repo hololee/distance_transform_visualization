@@ -1,4 +1,4 @@
-##Distance Transform by multiple distance method
+<h2>Distance Transform by multiple distance method</h2>
 
 Distance transform is two pass algorithm. using local mask.
   
