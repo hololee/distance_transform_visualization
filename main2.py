@@ -104,95 +104,48 @@ def generate_image(use_sample=True, init_img=None):
     return copy_image
 
 
+def get_local_mask(pass_time):
+    coord_list = np.array(list(range(5))) - 2
+    all_mask = np.array(list(product(coord_list, coord_list)))
+
+    assert pass_time == 1 or pass_time == 2, "'pass_time' should be 1 or 2."
+
+    if pass_time == 1:
+        local_mask_maps = all_mask[np.where((all_mask[:, 0] < 0) | ((all_mask[:, 0] == 0) & (all_mask[:, 1] < 0)))]
+    elif pass_time == 2:
+        local_mask_maps = all_mask[np.where((all_mask[:, 0] > 0) | ((all_mask[:, 0] == 0) & (all_mask[:, 1] > 0)))]
+
+    return local_mask_maps
+
+
 def first_pass(sel_distance, sel_image):
     height = sel_image.shape[0]
     width = sel_image.shape[1]
 
     copy_img = deepcopy(sel_image)
 
-    for y in range(height):
-        for x in range(width):
-            try:
-                local_mask_5 = sel_distance(y, y - 2, x, x - 2) + copy_img[y - 2:y - 1, x - 2:x - 1]
-                if len(local_mask_5) == 0:
-                    local_mask_5 = N_max
-            except:
-                local_mask_5 = N_max
-            try:
-                local_mask_6 = sel_distance(y, y - 2, x, x) + copy_img[y - 2:y - 1, x:x + 1]
-                if len(local_mask_6) == 0:
-                    local_mask_6 = N_max
-            except:
-                local_mask_6 = N_max
-            try:
-                local_mask_7 = sel_distance(y, y - 2, x, x - 1) + copy_img[y - 2:y - 1, x - 1:x]
-                if len(local_mask_7) == 0:
-                    local_mask_7 = N_max
-            except:
-                local_mask_7 = N_max
-            try:
-                local_mask_8 = sel_distance(y, y - 1, x, x - 2) + copy_img[y - 1:y, x - 2:x - 1]
-                if len(local_mask_8) == 0:
-                    local_mask_8 = N_max
-            except:
-                local_mask_8 = N_max
-            try:
-                local_mask_9 = sel_distance(y, y, x, x - 2) + copy_img[y:y + 1, x - 2:x - 1]
-                if len(local_mask_9) == 0:
-                    local_mask_9 = N_max
-            except:
-                local_mask_9 = N_max
-            try:
-                local_mask_10 = sel_distance(y, y + 1, x, x - 2) + copy_img[y + 1:y + 2, x - 2:x - 1]
-                if len(local_mask_10) == 0:
-                    local_mask_10 = N_max
-            except:
-                local_mask_10 = N_max
-            try:
-                local_mask_11 = sel_distance(y, y + 2, x, x - 2) + copy_img[y + 2:y + 3, x - 2:x - 1]
-                if len(local_mask_11) == 0:
-                    local_mask_11 = N_max
-            except:
-                local_mask_11 = N_max
-            try:
-                local_mask_12 = sel_distance(y, y + 2, x, x - 1) + copy_img[y + 2:y + 3, x - 1:x]
-                if len(local_mask_12) == 0:
-                    local_mask_12 = N_max
-            except:
-                local_mask_12 = N_max
+    for _y in range(height):
+        for _x in range(width):
+            local_masks = []
+            for local_co in get_local_mask(1):
+                # local_co is coordinate of neighborhood.
+                try:
+                    local_mask = sel_distance(_y, _y + local_co[1], _x, _x + local_co[0]) + \
+                                 copy_img[_y + local_co[1]:_y + local_co[1] + 1, _x + local_co[0]:_x + local_co[0] + 1]
+                    if len(local_mask) == 0:
+                        local_mask = N_max
+                except:
+                    local_mask = N_max
+
+                local_masks.append(local_mask)
+
+            # add center.
+            local_masks.append(copy_img[_y, _x])
 
             try:
-                local_mask_1 = sel_distance(y, y - 1, x, x - 1) + copy_img[y - 1:y, x - 1:x]
-                if len(local_mask_1) == 0:
-                    local_mask_1 = N_max
+                copy_img[_y, _x] = np.min(local_masks).item()
             except:
-                local_mask_1 = N_max
-            try:
-                local_mask_2 = sel_distance(y, y - 1, x, x) + copy_img[y - 1:y, x:x + 1]
-                if len(local_mask_2) == 0:
-                    local_mask_2 = N_max
-            except:
-                local_mask_2 = N_max
-            try:
-                local_mask_3 = sel_distance(y, y, x, x - 1) + copy_img[y:y + 1, x - 1:x]
-                if len(local_mask_3) == 0:
-                    local_mask_3 = N_max
-            except:
-                local_mask_3 = N_max
-            try:
-                local_mask_4 = sel_distance(y, y + 1, x, x - 1) + copy_img[y + 1:y + 2, x - 1:x]
-                if len(local_mask_4) == 0:
-                    local_mask_4 = N_max
-            except:
-                local_mask_4 = N_max
-
-            local_mask_center = copy_img[y, x]
-
-            try:
-                copy_img[y, x] = np.min(
-                    [local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_5, local_mask_6, local_mask_7, local_mask_8,local_mask_9, local_mask_10, local_mask_11, local_mask_12, local_mask_center]).item()
-            except:
-                copy_img[y, x] = np.min([local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_5, local_mask_6, local_mask_7, local_mask_8,local_mask_9, local_mask_10, local_mask_11, local_mask_12, local_mask_center])
+                copy_img[_y, _x] = np.min(local_masks)
 
     return copy_img
 
@@ -203,92 +156,30 @@ def second_pass(sel_distance, sel_image):
 
     copy_img = deepcopy(sel_image)
 
-    for y in range(height - 1, -1, -1):
-        for x in range(width - 1, -1, -1):
-            try:
-                local_mask_5 = sel_distance(y, y - 2, x, x + 1) + copy_img[y - 2:y - 1, x + 1:x + 2]
-                if len(local_mask_5) == 0:
-                    local_mask_5 = N_max
-            except:
-                local_mask_5 = N_max
-            try:
-                local_mask_6 = sel_distance(y, y - 2, x, x + 2) + copy_img[y - 2:y - 1, x + 2:x + 3]
-                if len(local_mask_6) == 0:
-                    local_mask_6 = N_max
-            except:
-                local_mask_6 = N_max
-            try:
-                local_mask_7 = sel_distance(y, y - 1, x, x + 2) + copy_img[y - 1:y, x + 2:x + 3]
-                if len(local_mask_7) == 0:
-                    local_mask_7 = N_max
-            except:
-                local_mask_7 = N_max
-            try:
-                local_mask_8 = sel_distance(y, y, x, x + 2) + copy_img[y:y + 1, x + 2:x + 3]
-                if len(local_mask_8) == 0:
-                    local_mask_8 = N_max
-            except:
-                local_mask_8 = N_max
-            try:
-                local_mask_9 = sel_distance(y, y + 1, x, x + 2) + copy_img[y + 1:y + 2, x + 2:x + 3]
-                if len(local_mask_9) == 0:
-                    local_mask_9 = N_max
-            except:
-                local_mask_9 = N_max
-            try:
-                local_mask_10 = sel_distance(y, y + 2, x, x + 2) + copy_img[y + 2:y + 3, x + 2:x + 3]
-                if len(local_mask_10) == 0:
-                    local_mask_10 = N_max
-            except:
-                local_mask_10 = N_max
-            try:
-                local_mask_11 = sel_distance(y, y + 2, x, x + 1) + copy_img[y + 2:y + 3, x + 1:x + 2]
-                if len(local_mask_11) == 0:
-                    local_mask_11 = N_max
-            except:
-                local_mask_11 = N_max
-            try:
-                local_mask_12 = sel_distance(y, y + 2, x, x) + copy_img[y + 2:y + 3, x:x + 1]
-                if len(local_mask_12) == 0:
-                    local_mask_12 = N_max
-            except:
-                local_mask_12 = N_max
+    for _y in range(height - 1, -1, -1):
+        for _x in range(width - 1, -1, -1):
+            local_masks = []
+            for local_co in get_local_mask(2):
+                # local_co is coordinate of neighborhood.
+                try:
+                    local_mask = sel_distance(_y, _y + local_co[1], _x, _x + local_co[0]) + \
+                                 copy_img[_y + local_co[1]:_y + local_co[1] + 1, _x + local_co[0]:_x + local_co[0] + 1]
+                    if len(local_mask) == 0:
+                        local_mask = N_max
+                except:
+                    local_mask = N_max
+
+                local_masks.append(local_mask)
+
+            # add center.
+            local_masks.append(copy_img[_y, _x])
 
             try:
-                local_mask_1 = sel_distance(y, y + 1, x, x + 1) + copy_img[y + 1:y + 2, x + 1:x + 2]
-                if len(local_mask_1) == 0:
-                    local_mask_1 = N_max
+                copy_img[_y, _x] = np.min(local_masks).item()
             except:
-                local_mask_1 = N_max
-            try:
-                local_mask_2 = sel_distance(y, y + 1, x, x) + copy_img[y + 1:y + 2, x:x + 1]
-                if len(local_mask_2) == 0:
-                    local_mask_2 = N_max
-            except:
-                local_mask_2 = N_max
-            try:
-                local_mask_3 = sel_distance(y, y, x, x + 1) + copy_img[y:y + 1, x + 1: x + 2]
-                if len(local_mask_3) == 0:
-                    local_mask_3 = N_max
-            except:
-                local_mask_3 = N_max
-            try:
-                local_mask_4 = sel_distance(y, y - 1, x, x + 1) + copy_img[y - 1:y, x + 1:x + 2]
-                if len(local_mask_4) == 0:
-                    local_mask_4 = N_max
-            except:
-                local_mask_4 = N_max
-
-            local_mask_center = copy_img[y, x]
-
-            try:
-                copy_img[y, x] = np.min(
-                    [local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_5, local_mask_6, local_mask_7, local_mask_8,local_mask_9, local_mask_10, local_mask_11, local_mask_12,local_mask_center]).item()
-            except:
-                copy_img[y, x] = np.min([local_mask_1, local_mask_2, local_mask_3, local_mask_4, local_mask_5, local_mask_6, local_mask_7, local_mask_8,local_mask_9, local_mask_10, local_mask_11, local_mask_12, local_mask_center])
+                copy_img[_y, _x] = np.min(local_masks)
 
     return copy_img
-
 
 # main script ----------------------------------------------------------------------
 
